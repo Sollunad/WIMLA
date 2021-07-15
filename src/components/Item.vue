@@ -40,7 +40,7 @@ export default {
 
 <style scoped>
   .not-available {
-    opacity: 30%;
+    opacity: 0.3;
   }
 
   .text {
