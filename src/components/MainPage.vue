@@ -15,17 +15,17 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-container>
-      <v-row v-for="(itemRow, id) in itemInfo" :key="id">
-        <v-col xl="1" v-for="item in itemRow" :key="item.id">
-          <Item
-              :iconLink="item.icon"
-              :countMax="item.maxCount"
-              :countAval="getAvalCount(item.id)"
-          />
-        </v-col>
-      </v-row>
-    </v-container>
+    <v-checkbox
+        v-model="hideNotUnlocked"
+        label="Hide not unlocked items"
+    ></v-checkbox>
+    <div class="item-row" v-for="(itemRow, id) in completeItems" :key="id">
+        <Item
+            class="item"
+            v-for="item in itemRow"
+            :key="item.id"
+            :item="item"/>
+    </div>
   </div>
 </template>
 
@@ -40,6 +40,7 @@
       itemInfo: [],
       accountInfo: [],
       apiKey: '',
+      hideNotUnlocked: false,
     }),
     created: async function() {
       this.itemInfo = await getItemInfo();
@@ -49,7 +50,17 @@
         await this.getAccountInfo();
       }
     },
+    computed: {
+      completeItems: function() {
+        return this.itemInfo.map(
+            row => row.map(item => ({ ...item, avalCount: this.getAvalCount(item.id)})).filter(item => this.filterItem(item))
+        );
+      }
+    },
     methods: {
+      filterItem: function(item) {
+        return item.avalCount > 0 || !this.hideNotUnlocked;
+      },
       getAccountInfo: async function() {
         this.accountInfo = await getAccountInfo(this.apiKey);
         localStorage.setItem('apiKey', this.apiKey);
@@ -60,3 +71,13 @@
     }
   }
 </script>
+
+<style scoped>
+  .item-row {
+    margin-bottom: 8px;
+  }
+
+  .item {
+    margin-right: 48px;
+  }
+</style>

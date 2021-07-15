@@ -1,32 +1,38 @@
 <template>
-  <div>
+  <span>
     <v-badge
-        color="green"
+        :color="color"
         :content="avalText"
     >
-      <v-img :src="iconLink" :class="imgClassObject" max-width="64">
-
-      </v-img>
+      <v-tooltip right>
+        <template v-slot:activator="{ on, attrs }">
+          <v-img :src="item.icon" :class="imgClassObject" max-width="64" v-bind="attrs" v-on="on"/>
+        </template>
+        <div>{{ item.name }}</div>
+        <div>{{ item.details.weight_class || '' }} {{ item.details.type || '' }}</div>
+      </v-tooltip>
     </v-badge>
-  </div>
+  </span>
 </template>
 
 <script>
 export default {
   name: "Item",
   props: {
-    iconLink: String,
-    countMax: Number,
-    countAval: Number,
+    item: Object,
   },
   computed: {
     imgClassObject: function() {
       return {
-        'not-available': this.countAval === 0,
+        'not-available': this.item.avalCount === 0,
       }
     },
+    color: function() {
+      console.log(this.item);
+      return this.item.avalCount > 0 ? 'green' : 'red';
+    },
     avalText: function() {
-      return `${this.countAval} / ${this.countMax}`
+      return `${this.item.avalCount} / ${this.item.maxCount}`
     }
   }
 }
