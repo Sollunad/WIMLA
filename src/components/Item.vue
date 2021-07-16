@@ -6,7 +6,7 @@
     >
       <v-tooltip right>
         <template v-slot:activator="{ on, attrs }">
-          <v-img :src="item.icon" :class="imgClassObject" max-width="64" v-bind="attrs" v-on="on"/>
+          <v-img :src="item.icon" @click="openWiki" :class="imgClassObject" max-width="64" v-bind="attrs" v-on="on"/>
         </template>
         <div>{{ item.name }}</div>
         <div>{{ item.details.weight_class || '' }} {{ item.details.type || '' }}</div>
@@ -28,12 +28,17 @@ export default {
       }
     },
     color: function() {
-      console.log(this.item);
       return this.item.avalCount > 0 ? 'green' : 'red';
     },
     avalText: function() {
       return `${this.item.avalCount} / ${this.item.maxCount}`
     }
+  },
+  methods: {
+    openWiki: function() {
+      const wikiLink = `https://wiki.guildwars2.com/index.php?title=Special:Search&search=${this.item.name}`
+      window.open(wikiLink);
+    },
   }
 }
 </script>
